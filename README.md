@@ -32,3 +32,27 @@ array(2) {
 }
 
 ```
+
+## Update
+
+Found the problem.
+
+JMS Serializer changes the json to an array like `['order_id' => 'wtf']`. Then it looks for a `order_id` property but can't find one.
+
+Conclusion?
+
+```
+var_dump($serializer->deserialize('{"orderId": "caca"}', DTO::class, 'json'));
+
+class App\DTO#14 (1) {
+  private $orderId =>
+  NULL
+}
+
+var_dump($serializer->deserialize('{"order_id": "caca"}', DTO::class, 'json'));
+
+class App\DTO#44 (1) {
+  private $orderId =>
+  string(4) "caca"
+}
+```
